@@ -9,6 +9,8 @@ using System.Collections.Generic;
 namespace NLayer.API.Controllers
 {
  
+
+
     public class ProductsController : CustomBaseController
     {
         private readonly IMapper _mapper;
