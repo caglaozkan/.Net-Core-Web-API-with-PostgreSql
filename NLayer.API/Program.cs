@@ -1,9 +1,12 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NLayer.API.Filters;
 using NLayer.API.Middlewares;
+using NLayer.API.Modules;
 using NLayer.Core.Repositories;
 using NLayer.Core.Services;
 using NLayer.Core.UnitOfWorks;
@@ -30,14 +33,15 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>)); // generic þeyleri buaraya ekliyorz.
-builder.Services.AddScoped(typeof(IService<>), typeof(Service<>));
+builder.Services.AddMemoryCache();
+
+builder.Services.AddScoped(typeof(NotFoundFilter<>)); 
+
+// generic þeyleri buaraya ekliyorz ve generic oldugunda typeof ile belirtme yapýyoruz..
+
 builder.Services.AddAutoMapper(typeof(MapProfile));   // burda içine mapping dosyasýný belirtmek amaçlý ya tipini yada assembyi belirtmemiz gerekyor.Tpini belirticez.
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+
 
 // generic oldugu için typeof olarak ekliyoruz.
 // generic repodan nesne örnegi al dedik.generic diye type of yazdýk bunlar birden fazla dinamik alsaydý yani T entity bi tane alýyor  birden fazla alsaydý ,lerle yazardýk içine.<>
@@ -51,6 +55,11 @@ builder.Services.AddDbContext<AppDbContext>(x =>
     });
 });
 
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder => containerBuilder.RegisterModule(new RepoServiceModule()));
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -62,7 +71,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UserCustomException(); // yeri önemli.
+app.UseCustomException(); // yeri önemli.
 
 app.UseAuthorization(); 
 

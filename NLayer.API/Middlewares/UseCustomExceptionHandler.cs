@@ -6,9 +6,9 @@ using System.Text.Json.Serialization;
 
 namespace NLayer.API.Middlewares
 {
-    public static class useCustomExceptionHandler  // extension methodlar static olur parametresi this ile başlar
+    public static class UseCustomExceptionHandler  // extension methodlar static olur parametresi this ile başlar
     {
-        public static void UserCustomException(this IApplicationBuilder app)
+        public static void UseCustomException(this IApplicationBuilder app)
         {
 
             app.UseExceptionHandler(config =>
@@ -25,7 +25,8 @@ namespace NLayer.API.Middlewares
 
                     var statusCode = exceptionFeature.Error switch
                     {
-                        ClientSideException => 400,   // ClientSideException ise 400 bunun dışında bişeyse default olarak _ dedik 500 ata
+                        ClientSideException => 400,
+                        NotFoundException => 404,           // ClientSideException ise 400 bunun dışında bişeyse default olarak _ dedik 500 ata
                         _ => 500
                     };
 
