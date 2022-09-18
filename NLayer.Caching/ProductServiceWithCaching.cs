@@ -6,6 +6,7 @@ using NLayer.Core.Models;
 using NLayer.Core.Repositories;
 using NLayer.Core.Services;
 using NLayer.Core.UnitOfWorks;
+using NLayer.Service.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace NLayer.Caching
 
             if (!_memoryCache.TryGetValue(CacheProductKey, out _))  //CacheProductKey na sahip data var mı yok mu diye bakıcaz cacheteki datayı almak istemiyoruz ondan out u boş bıraktık _ ile// out ta yani 2. parametrede cache te tuttugu datayı döner.Bir methodda birden fazla deger dönmek istiyorsa out kullanabilirsin.
             {
-                _memoryCache.Set(CacheProductKey, _productRepository.GetAll().ToList());
+                _memoryCache.Set(CacheProductKey, _productRepository.GetProductWithCategory().Result); // result ını alıp methodu syncrona çevirmemiz lazım çünkü normalde bu method asynron yoksa cast edemiyor.
             }
 
 
@@ -63,17 +64,25 @@ namespace NLayer.Caching
 
         public Task<IEnumerable<Product>> GetAllAsync()
         {
-            throw new NotImplementedException();
-        }
+           return Task.FromResult(_memoryCache.Get<IEnumerable<Product>>(CacheProductKey));
+        }   // yukarda category ile productı birlikte aldık ama burda sadece product gelicek çünkü contorllerda sadece product ı mappliyoruz.O yüzden sorun olmıcak.
 
         public Task<Product> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+           var product= _memoryCache.Get<List<Product>>(CacheProductKey).FirstOrDefault(x => x.Id == id);
+
+            if (product == null)
+            {
+                throw new NotFoundException($"{typeof(Product).Name} not found");
+            }
+            return Task.FromResult(product); // async degil await  yazamıyoruz geriye de task bekliyor ondan task döndük.
         }
 
         public Task<CustomResponseDto<List<ProductWithCategoryDto>>> GetProductWithCategory()
         {
-            throw new NotImplementedException();
+            var product = _memoryCache.Get<IEnumerable<Product>>(CacheProductKey);
+            var productwithcategory = _mapper.Map<List<ProductWithCategoryDto>>(product);
+            return Task.FromResult( CustomResponseDto<List<ProductWithCategoryDto>>.Success(200, productwithcategory));
         }
 
         public async Task RemoveAsync(Product entity)
@@ -84,9 +93,11 @@ namespace NLayer.Caching
             
         }
 
-        public void RemoveRangeAsync(IEnumerable<Product> entities)
+        public async Task RemoveRangeAsync (IEnumerable<Product> entities)
         {
-            throw new NotImplementedException();
+            _productRepository.RemoveRange(entities);
+            await _unitOfWork.CommitAsync();
+            await CacheAllProductAsync();
         }
 
         public async Task UpdateAsync(Product entity)

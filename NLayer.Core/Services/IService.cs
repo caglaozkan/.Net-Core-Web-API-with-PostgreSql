@@ -17,7 +17,7 @@ namespace NLayer.Core.Services
         Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
         Task UpdateAsync(T entity); // normalde repository içinde bunlar voiddir ef core da bunların dönüş tipi yoktur async methodu yoktur ama service te db ye bunları yansıtacagımız için var. 
         Task RemoveAsync(T entity);
-        void RemoveRangeAsync(IEnumerable<T> entities);
+        Task RemoveRangeAsync(IEnumerable<T> entities);
 
 
     }
