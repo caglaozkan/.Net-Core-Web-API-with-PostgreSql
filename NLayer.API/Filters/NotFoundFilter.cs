@@ -6,7 +6,7 @@ using NLayer.Core.Services;
 
 namespace NLayer.API.Filters
 { 
-    public class NotFoundFilter<T> : IAsyncActionFilter where T : BaseEntity // tüm enttiyler için olsun diye dinamik T kullandık.
+    public class NotFoundFilter<T> : IAsyncActionFilter where T : BaseEntity 
     {
         private readonly IService<T> _service;
 
@@ -23,7 +23,7 @@ namespace NLayer.API.Filters
                 await next.Invoke();
                 return;
             }
-            var id = (int)idValue; // int cast etttik. // buraya kadar id var mı yok mu diye kontrol sağladık.Şimdi entity var mı diye bakıcaz.
+            var id = (int)idValue; 
             var entity = await _service.AnyAsync(x=>x.Id==id);
             if (entity)
             {
