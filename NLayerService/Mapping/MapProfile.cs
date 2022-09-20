@@ -13,8 +13,8 @@ namespace NLayer.Service.Mapping
     {
         public MapProfile()
         {
-            // neyi neye maplemek istedigimiz belirtiyoruz.
-            CreateMap<Product, ProductDto>().ReverseMap(); // reversemap tam tersi de olabilir demek için kullanılır.
+          
+            CreateMap<Product, ProductDto>().ReverseMap(); 
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<ProductFeature, ProductFeatureDto>().ReverseMap();
             CreateMap<ProductUpdateDto, Product>();
