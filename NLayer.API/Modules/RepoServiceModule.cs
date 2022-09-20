@@ -19,13 +19,13 @@ namespace NLayer.API.Modules
         protected override void Load(ContainerBuilder builder)
         { 
 
-            builder.RegisterGeneric(typeof(GenericRepository<>)).As(typeof(IGenericRepository<>)).InstancePerLifetimeScope(); // generic ama birer tane olanlar.
+            builder.RegisterGeneric(typeof(GenericRepository<>)).As(typeof(IGenericRepository<>)).InstancePerLifetimeScope(); 
             builder.RegisterGeneric(typeof(Service<>)).As(typeof(IService<>)).InstancePerLifetimeScope();
 
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>();
 
 
-            var apiAssembly = Assembly.GetExecutingAssembly(); // apiye ait assmbly yi al diyoruz.Üzerinde çalıştıgım assembly
+            var apiAssembly = Assembly.GetExecutingAssembly(); 
             var repo = Assembly.GetAssembly(typeof(AppDbContext));
             var serviceAssembly = Assembly.GetAssembly(typeof(MapProfile));
 
@@ -42,8 +42,7 @@ namespace NLayer.API.Modules
 
 
 
-            // InstancePerLifetimeScope x => scope ifadesine karşılık geliyor. // request başladı bitene kadar aynı instance ı kullansın
-            //InstancePerDependency x => transient e karşılık gelir. // herhangi bir classın constracterinda o interface nerde geçildiyse her seferinde yeni instance oluşturur.
+            
         }
     }
 }
