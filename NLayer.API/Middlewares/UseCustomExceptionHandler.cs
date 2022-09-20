@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace NLayer.API.Middlewares
 {
-    public static class UseCustomExceptionHandler  // extension methodlar static olur parametresi this ile başlar
+    public static class UseCustomExceptionHandler 
     {
         public static void UseCustomException(this IApplicationBuilder app)
         {
@@ -16,7 +16,7 @@ namespace NLayer.API.Middlewares
 
 
 
-                config.Run(async context =>                          // sonlandırıcı middleware request daha ileri girmicek.
+                config.Run(async context =>                         
                 {
                     context.Response.ContentType = "application/json";
 
@@ -26,14 +26,14 @@ namespace NLayer.API.Middlewares
                     var statusCode = exceptionFeature.Error switch
                     {
                         ClientSideException => 400,
-                        NotFoundException => 404,           // ClientSideException ise 400 bunun dışında bişeyse default olarak _ dedik 500 ata
+                        NotFoundException => 404,           
                         _ => 500
                     };
 
                     context.Response.StatusCode = statusCode;
 
-                    var response = CustomResponseDto<NoContentDto>.Fail(statusCode, exceptionFeature.Error.Message); // response bir tip döner bunu geri dönebilmek için jsona serilize ederiz.
-                    // middleware larda controllerdaki gibi oto jsona döndürme olayı yok. kendim yazarım.
+                    var response = CustomResponseDto<NoContentDto>.Fail(statusCode, exceptionFeature.Error.Message); 
+                   
                     await context.Response.WriteAsync(JsonSerializer.Serialize(response));
 
 
