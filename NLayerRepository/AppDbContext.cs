@@ -12,7 +12,7 @@ namespace NLayerRepository
 {
     public class AppDbContext: DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options):base (options) // veritabanı yolunu startup dosyasında verebilmek için dbcontextoptions ı kullanırız.
+        public AppDbContext(DbContextOptions<AppDbContext> options):base (options) 
         {
 
         }
@@ -25,11 +25,11 @@ namespace NLayerRepository
 
 
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) // model oluşurken çalışacak olan method
+        protected override void OnModelCreating(ModelBuilder modelBuilder) 
         {
 
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());  // bu assembly ler yani projeler içindeki tüm conf dosylarını alır.
-            modelBuilder.ApplyConfiguration(new ProductConfiguration()); // bi tane kullanmak istersen.
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());  
+            modelBuilder.ApplyConfiguration(new ProductConfiguration()); 
 
 
             modelBuilder.Entity<ProductFeature>().HasData(new ProductFeature()
@@ -56,8 +56,7 @@ namespace NLayerRepository
 
 
 
-            //modelBuilder.Entity<Category>().HasKey(x => x.Id); // normalde biz category içinde sadece Id vererek bunu pk yaptık ama custom bir isim vermek istersen burda bunun pk oldugunu açık açık yazmamız gerekiyor bunu da best pricatice olarak configurasyon dosylarında yani burda yapıyoruz model içinde [key] şeklinde yapmak tercih edilmemeli.
-            //// bu yaklışama fluent api olarak adlandırılır. // bunlar burda yapılavilir fakat best pricatesi açısından ayrı bir class içinde yapıcaz her entitiy için.
+           
 
             base.OnModelCreating(modelBuilder); 
         }
