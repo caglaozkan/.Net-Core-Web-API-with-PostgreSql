@@ -14,7 +14,7 @@ namespace NLayerRepository.Configurations
         public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).UseIdentityColumn();// ıd si birer birer artsın.
+            builder.Property(x => x.Id).UseIdentityColumn();
             builder.Property<string>(x => x.Name).IsRequired().HasMaxLength(50);
         }
     }
