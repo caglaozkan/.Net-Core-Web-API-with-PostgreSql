@@ -23,7 +23,7 @@ namespace NLayer.Caching
         private readonly IMapper _mapper;
         private readonly IMemoryCache _memoryCache;
         private readonly IProductRepository _productRepository;
-        private readonly IUnitOfWork _unitOfWork; // db ye de yansıtıcaz.   
+        private readonly IUnitOfWork _unitOfWork; 
 
         public ProductServiceWithCaching(IMapper mapper, IMemoryCache memoryCache, IProductRepository productRepository, IUnitOfWork unitOfWork)
         {
@@ -32,9 +32,9 @@ namespace NLayer.Caching
             _productRepository = productRepository;
             _unitOfWork = unitOfWork;
 
-            if (!_memoryCache.TryGetValue(CacheProductKey, out _))  //CacheProductKey na sahip data var mı yok mu diye bakıcaz cacheteki datayı almak istemiyoruz ondan out u boş bıraktık _ ile// out ta yani 2. parametrede cache te tuttugu datayı döner.Bir methodda birden fazla deger dönmek istiyorsa out kullanabilirsin.
+            if (!_memoryCache.TryGetValue(CacheProductKey, out _))  
             {
-                _memoryCache.Set(CacheProductKey, _productRepository.GetProductWithCategory().Result); // result ını alıp methodu syncrona çevirmemiz lazım çünkü normalde bu method asynron yoksa cast edemiyor.
+                _memoryCache.Set(CacheProductKey, _productRepository.GetProductWithCategory().Result); 
             }
 
 
@@ -65,7 +65,7 @@ namespace NLayer.Caching
         public Task<IEnumerable<Product>> GetAllAsync()
         {
            return Task.FromResult(_memoryCache.Get<IEnumerable<Product>>(CacheProductKey));
-        }   // yukarda category ile productı birlikte aldık ama burda sadece product gelicek çünkü contorllerda sadece product ı mappliyoruz.O yüzden sorun olmıcak.
+        }  
 
         public Task<Product> GetByIdAsync(int id)
         {
@@ -75,7 +75,7 @@ namespace NLayer.Caching
             {
                 throw new NotFoundException($"{typeof(Product).Name} not found");
             }
-            return Task.FromResult(product); // async degil await  yazamıyoruz geriye de task bekliyor ondan task döndük.
+            return Task.FromResult(product); 
         }
 
         public Task<CustomResponseDto<List<ProductWithCategoryDto>>> GetProductWithCategory()
@@ -109,12 +109,12 @@ namespace NLayer.Caching
 
         public IQueryable<Product> Where(Expression<Func<Product, bool>> expression)
         {
-            return _memoryCache.Get<List<Product>>(CacheProductKey).Where(expression.Compile()).AsQueryable(); // ef core dan degil artık cache ten veriyi çekiyoruz.Compile ediypruz çünkü where bi function dönüş istiyor.
+            return _memoryCache.Get<List<Product>>(CacheProductKey).Where(expression.Compile()).AsQueryable(); 
         }
 
         public async Task CacheAllProductAsync()
         {
-          await  _memoryCache.Set(CacheProductKey, _productRepository.GetAll().ToListAsync()); // her çagırdıgımda 0 dan datayı çekip cachiyor.
+          await  _memoryCache.Set(CacheProductKey, _productRepository.GetAll().ToListAsync()); 
         }
     }
 }
