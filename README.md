@@ -19,4 +19,6 @@ This is a Web API Project with 7 different kind of end points.
 
 Data is from in postgresql database
 
+A custom middleware for exception handling is created. Whenever system gets an exception middleware gets actived and handles the exception according to the type of exception.
+
 
