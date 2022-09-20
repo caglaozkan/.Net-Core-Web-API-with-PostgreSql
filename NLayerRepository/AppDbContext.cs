@@ -51,16 +51,58 @@ namespace NLayerRepository
                 ProductId = 1
             });
 
-
-
-
-
-
-            //modelBuilder.Entity<Category>().HasKey(x => x.Id); // normalde biz category içinde sadece Id vererek bunu pk yaptık ama custom bir isim vermek istersen burda bunun pk oldugunu açık açık yazmamız gerekiyor bunu da best pricatice olarak configurasyon dosylarında yani burda yapıyoruz model içinde [key] şeklinde yapmak tercih edilmemeli.
-            //// bu yaklışama fluent api olarak adlandırılır. // bunlar burda yapılavilir fakat best pricatesi açısından ayrı bir class içinde yapıcaz her entitiy için.
-
             base.OnModelCreating(modelBuilder); 
         }
 
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            foreach (var item in ChangeTracker.Entries())
+            {
+                if (item.Entity is BaseEntity entityReferance)
+                {
+                    switch (item.State)
+                    {
+                        case EntityState.Added:
+                        {
+                                entityReferance.CreatedDate = DateTime.Now;
+                                break;
+                        }
+                        case EntityState.Modified:
+                            {
+                                Entry(entityReferance).Property(x => x.CreatedDate).IsModified = false;
+                                entityReferance.UpdatedDate = DateTime.Now;
+                                break;
+                            }
+                            
+                    }
+                }
+            }
+            return base.SaveChangesAsync(cancellationToken);
+        }
+        public override int SaveChanges()
+        {
+            foreach (var item in ChangeTracker.Entries())
+            {
+                if (item.Entity is BaseEntity entityReferance)
+                {
+                    switch (item.State)
+                    {
+                        case EntityState.Added:
+                            {
+                                entityReferance.CreatedDate = DateTime.Now;
+                                break;
+                            }
+                        case EntityState.Modified:
+                            {
+                                Entry(entityReferance).Property(x => x.CreatedDate).IsModified = false;
+                                entityReferance.UpdatedDate = DateTime.Now;
+                                break;
+                            }
+                    }
+                }
+            }
+            return base.SaveChanges();
+        }
     }
 }

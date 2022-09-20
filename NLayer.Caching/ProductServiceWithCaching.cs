@@ -78,11 +78,11 @@ namespace NLayer.Caching
             return Task.FromResult(product); // async degil await  yazamıyoruz geriye de task bekliyor ondan task döndük.
         }
 
-        public Task<CustomResponseDto<List<ProductWithCategoryDto>>> GetProductWithCategory()
+        public Task<List<ProductWithCategoryDto>> GetProductWithCategory()
         {
             var product = _memoryCache.Get<IEnumerable<Product>>(CacheProductKey);
             var productwithcategory = _mapper.Map<List<ProductWithCategoryDto>>(product);
-            return Task.FromResult( CustomResponseDto<List<ProductWithCategoryDto>>.Success(200, productwithcategory));
+            return Task.FromResult(productwithcategory);
         }
 
         public async Task RemoveAsync(Product entity)
